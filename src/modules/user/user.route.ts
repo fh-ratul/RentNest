@@ -6,5 +6,11 @@ import { userController } from "./user.controller";
 
 const router= Router()
 router.patch("/updateMe", auth(), validateRequest(userValidation.updateProfileSchema), userController.updateProfile);
+router.patch(
+  "/change-password",
+  auth(),
+  validateRequest(userValidation.changePasswordSchema),
+  userController.changePassword
+);
 export const userRoutes = router;
 

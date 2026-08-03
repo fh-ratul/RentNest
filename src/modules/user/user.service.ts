@@ -3,7 +3,7 @@ import httpStatus from "http-status";
 import { prisma } from "../../lib/prisma";
 import config from "../../config";
 import { IUpdateProfile, IChangePassword } from "./user.interface";
-
+import { ApiError } from "../../utils/apiError";
 
 const updateProfile = async (userId: string, payload: IUpdateProfile) => {
   const user = await prisma.user.update({
@@ -14,6 +14,27 @@ const updateProfile = async (userId: string, payload: IUpdateProfile) => {
   return user;
 };
 
+const changePassword = async (userId: string, payload: IChangePassword) => {
+  const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
+
+  const isMatched = await bcrypt.compare(payload.oldPassword, user.password);
+  if (!isMatched) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Old password is incorrect");
+  }
+
+  const hashedPassword = await bcrypt.hash(
+    payload.newPassword,
+    config.bcrypt_salt_rounds,
+  );
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { password: hashedPassword },
+  });
+
+  return null;
+};
 export const userService = {
-    updateProfile, 
-     };
+  updateProfile,
+  changePassword,
+};

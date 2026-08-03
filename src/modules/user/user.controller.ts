@@ -4,13 +4,26 @@ import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import { userService } from "./user.service";
 
-
 const updateProfile = catchAsync(async (req: Request, res: Response) => {
   const result = await userService.updateProfile(req.user!.id, req.body);
-  sendResponse(res, { success: true, statusCode: httpStatus.OK, message: "Profile updated", data: result });
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Profile updated",
+    data: result,
+  });
 });
 
-export const userController = { 
-    updateProfile,
-
+const changePassword = catchAsync(async (req: Request, res: Response) => {
+  await userService.changePassword(req.user!.id, req.body);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Password changed successfully",
+    data: null,
+  });
+});
+export const userController = {
+  updateProfile,
+  changePassword,
 };
