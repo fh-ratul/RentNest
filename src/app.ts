@@ -5,6 +5,7 @@ import config from "./config";
 import { authRoutes } from "./modules/auth/auth.route";
 import { notFound } from "./middlewares/notFound";
 import { globalErrorHandler } from "./middlewares/globalErrorHandler";
+import { userRoutes } from "./modules/user/user.route";
 
 
 
@@ -26,6 +27,8 @@ app.get("/",(req : Request, res : Response) => {
 
 
 app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+
 
 app.use(notFound);
 app.use(globalErrorHandler);
